@@ -53,7 +53,7 @@ class FaceAnalysis:
                 nh = (800*h)//w
                 img = cv2.resize(img, (nw, nh))
                 y_s = (1200-nh)//2
-                y_e = y_e + nh
+                y_e = y_s + nh
                 img_new[y_s:y_e,:] = img
         else:
             img_new = np.zeros((800, 1200, 3), np.uint8)
@@ -69,7 +69,7 @@ class FaceAnalysis:
                 nh = (1200*h)//w
                 img = cv2.resize(img, (nw, nh))
                 y_s = (800-nh)//2
-                y_e = y_e + nh
+                y_e = y_s + nh
                 img_new[y_s:y_e,:] = img
 
         img = img_new
