@@ -47,7 +47,7 @@ setup(
     # Metadata
     name='insightface',
     version=VERSION,
-    author='InsightFace Contributors',
+    author='Mohd Safwan + InsightFace Contributors',
     url='https://github.com/deepinsight/insightface',
     description='InsightFace Toolkit',
     long_description=long_description,
