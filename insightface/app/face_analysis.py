@@ -2,6 +2,7 @@ from __future__ import division
 import collections
 import mxnet as mx
 import numpy as np
+import cv2
 from numpy.linalg import norm
 import mxnet.ndarray as nd
 from ..model_zoo import model_zoo
@@ -36,6 +37,15 @@ class FaceAnalysis:
             self.ga_model.prepare(ctx_id)
 
     def get(self, img, det_thresh = 0.8, det_scale = 1.0, max_num = 0):
+        w, h, _ = img.shape
+        if w > h:
+            nw = 1200
+            nh = (1200*h)//w
+        else:
+            nh = 1200
+            nw = (1200*w)//h
+        orig = img
+        img = cv2.resize(orig, (nh, nw))
         bboxes, landmarks = self.det_model.detect(img, threshold=det_thresh, scale = det_scale)
         if bboxes.shape[0]==0:
             return []
@@ -54,7 +64,9 @@ class FaceAnalysis:
             bbox = bboxes[i, 0:4]
             det_score = bboxes[i,4]
             landmark = landmarks[i]
-            _img = face_align.norm_crop(img, landmark = landmark)
+            ratio = orig.shape[0]/img.shape[0]
+            landmark = landmark * ratio
+            _img = face_align.norm_crop(orig, landmark = landmark)
             embedding = None
             embedding_norm = None
             normed_embedding = None
