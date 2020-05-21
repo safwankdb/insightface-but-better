@@ -39,11 +39,13 @@ class FaceAnalysis:
     def get(self, img, det_thresh = 0.8, det_scale = 1.0, max_num = 0):
         orig = img
         h, w, _ = img.shape
+        x_s, x_e, y_s, y_e = 0, 0, 0, 0
         if h > w:
             img_new = np.zeros((1200, 800, 3), np.uint8)
             if h/w >= 1.5:
                 nh = 1200
                 nw = (1200*w)//h
+                ratio = h/nh
                 img = cv2.resize(img, (nw, nh))
                 x_s = (800-nw)//2
                 x_e = x_s + nw
@@ -51,6 +53,7 @@ class FaceAnalysis:
             else:
                 nw = 800
                 nh = (800*h)//w
+                ratio = h/nh
                 img = cv2.resize(img, (nw, nh))
                 y_s = (1200-nh)//2
                 y_e = y_s + nh
@@ -60,6 +63,7 @@ class FaceAnalysis:
             if w/h < 1.5:
                 nh = 800
                 nw = (800*w)//h
+                ratio = h/nh
                 img = cv2.resize(img, (nw, nh))
                 x_s = (1200-nw)//2
                 x_e = x_s + nw
@@ -67,6 +71,7 @@ class FaceAnalysis:
             else:
                 nw = 1200
                 nh = (1200*h)//w
+                ratio = h/nh
                 img = cv2.resize(img, (nw, nh))
                 y_s = (800-nh)//2
                 y_e = y_s + nh
@@ -91,7 +96,8 @@ class FaceAnalysis:
             bbox = bboxes[i, 0:4]
             det_score = bboxes[i,4]
             landmark = landmarks[i]
-            ratio = orig.shape[0]/img.shape[0]
+            landmark[:,0] = landmark[:,0] - x_s
+            landmark[:,1] = landmark[:,1] - y_s
             landmark = landmark * ratio
             _img = face_align.norm_crop(orig, landmark = landmark)
             embedding = None
