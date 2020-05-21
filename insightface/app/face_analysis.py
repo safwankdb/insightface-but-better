@@ -56,7 +56,7 @@ class FaceAnalysis:
                 y_e = y_e + nh
                 img_new[y_s:y_e,:] = img
         else:
-            img = np.zeros((1200, 800, 3), np.uint8)
+            img_new = np.zeros((1200, 800, 3), np.uint8)
             if w/h < 1.5:
                 nh = 800
                 nw = (800*w)//h
