@@ -37,15 +37,42 @@ class FaceAnalysis:
             self.ga_model.prepare(ctx_id)
 
     def get(self, img, det_thresh = 0.8, det_scale = 1.0, max_num = 0):
-        w, h, _ = img.shape
-        if w > h:
-            nw = 1200
-            nh = (1200*h)//w
-        else:
-            nh = 1200
-            nw = (1200*w)//h
         orig = img
-        img = cv2.resize(orig, (nh, nw))
+        h, w, _ = img.shape
+        if h > w:
+            img_new = np.zeros((800, 1200, 3), np.uint8)
+            if h/w >= 1.5:
+                nh = 1200
+                nw = (1200*w)//h
+                img = cv2.resize(img, (nw, nh))
+                x_s = (800-nw)//2
+                x_e = x_s + nw
+                img_new[:,x_s:x_e] = img
+            else:
+                nw = 800
+                nh = (800*h)//w
+                img = cv2.resize(img, (nw, nh))
+                y_s = (1200-nh)//2
+                y_e = y_e + nh
+                img_new[y_s:y_e,:] = img
+        else:
+            img = np.zeros((1200, 800, 3), np.uint8)
+            if w/h < 1.5:
+                nh = 800
+                nw = (800*w)//h
+                img = cv2.resize(img, (nw, nh))
+                x_s = (1200-nw)//2
+                x_e = x_s + nw
+                img_new[:,x_s:x_e] = img
+            else:
+                nw = 1200
+                nh = (1200*h)//w
+                img = cv2.resize(img, (nw, nh))
+                y_s = (800-nh)//2
+                y_e = y_e + nh
+                img_new[y_s:y_e,:] = img
+
+        img = img_new
         bboxes, landmarks = self.det_model.detect(img, threshold=det_thresh, scale = det_scale)
         if bboxes.shape[0]==0:
             return []
