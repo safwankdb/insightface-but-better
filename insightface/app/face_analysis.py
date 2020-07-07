@@ -79,8 +79,10 @@ class FaceAnalysis:
 
         img = img_new
         bboxes, landmarks = self.det_model.detect(img, threshold=det_thresh, scale = det_scale)
-        bboxes = bboxes[:, 0] - x_s
-        bboxes = bboxes[:, 1] - y_s
+        bboxes[:, 0] = bboxes[:, 0] - x_s
+        bboxes[:, 1] = bboxes[:, 1] - y_s
+        bboxes[:, 2] = bboxes[:, 2] - x_s
+        bboxes[:, 3] = bboxes[:, 3] - y_s
         bboxes = bboxes * ratio
         if bboxes.shape[0]==0:
             return []
