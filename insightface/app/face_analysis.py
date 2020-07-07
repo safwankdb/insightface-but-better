@@ -101,8 +101,8 @@ class FaceAnalysis:
             bbox = bboxes[i, 0:4]
             det_score = bboxes[i,4]
             new_landmark = landmarks[i].copy()
-            new_landmark[:,0] = landmark[:,0] - x_s
-            new_landmark[:,1] = landmark[:,1] - y_s
+            new_landmark[:,0] = new_landmark[:,0] - x_s
+            new_landmark[:,1] = new_landmark[:,1] - y_s
             new_landmark = new_landmark * ratio
             _img = face_align.norm_crop(orig, landmark = new_landmark)
             embedding = None
