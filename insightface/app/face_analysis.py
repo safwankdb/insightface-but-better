@@ -79,6 +79,9 @@ class FaceAnalysis:
 
         img = img_new
         bboxes, landmarks = self.det_model.detect(img, threshold=det_thresh, scale = det_scale)
+        bboxes = bboxes[:, 0] - x_s
+        bboxes = bboxes[:, 1] - y_s
+        bboxes = bboxes * ratio
         if bboxes.shape[0]==0:
             return []
         if max_num>0 and bboxes.shape[0]>max_num:
@@ -95,11 +98,11 @@ class FaceAnalysis:
         for i in range(bboxes.shape[0]):
             bbox = bboxes[i, 0:4]
             det_score = bboxes[i,4]
-            landmark = landmarks[i]
-            landmark[:,0] = landmark[:,0] - x_s
-            landmark[:,1] = landmark[:,1] - y_s
-            landmark = landmark * ratio
-            _img = face_align.norm_crop(orig, landmark = landmark)
+            new_landmark = landmarks[i].copy()
+            new_landmark[:,0] = landmark[:,0] - x_s
+            new_landmark[:,1] = landmark[:,1] - y_s
+            new_landmark = new_landmark * ratio
+            _img = face_align.norm_crop(orig, landmark = new_landmark)
             embedding = None
             embedding_norm = None
             normed_embedding = None
