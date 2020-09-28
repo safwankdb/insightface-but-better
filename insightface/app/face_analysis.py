@@ -40,21 +40,21 @@ class FaceAnalysis:
         orig = img
         h, w, _ = img.shape
         x_s, x_e, y_s, y_e = 0, 0, 0, 0
-        img_new = np.zeros((800, 800, 3), np.uint8)
+        img_new = np.zeros((500, 500, 3), np.uint8)
         if h > w:
-            nh = 800
-            nw = (800*w)//h
+            nh = 500
+            nw = (500*w)//h
             ratio = h/nh
             img = cv2.resize(img, (nw, nh))
-            x_s = (800-nw)//2
+            x_s = (500-nw)//2
             x_e = x_s + nw
             img_new[:,x_s:x_e] = img
         else:
-            nw = 800
-            nh = (800*h)//w
+            nw = 500
+            nh = (500*h)//w
             ratio = h/nh
             img = cv2.resize(img, (nw, nh))
-            y_s = (800-nh)//2
+            y_s = (500-nh)//2
             y_e = y_s + nh
             img_new[y_s:y_e,:] = img
 
