@@ -17,7 +17,8 @@ Face = collections.namedtuple('Face', [
 Face.__new__.__defaults__ = (None,) * len(Face._fields)
 
 class FaceAnalysis:
-    def __init__(self, det_name='retinaface_r50_v1', rec_name='arcface_r100_v1', ga_name='genderage_v1'):
+    def __init__(self, det_name='retinaface_r50_v1', rec_name='arcface_r100_v1', ga_name='genderage_v1', det_size=500):
+        self.det_size = det_size
         assert det_name is not None
         self.det_model = model_zoo.get_model(det_name)
         if rec_name is not None:
@@ -37,24 +38,25 @@ class FaceAnalysis:
             self.ga_model.prepare(ctx_id)
 
     def get(self, img, det_thresh = 0.8, det_scale = 1.0, max_num = 0):
+        det_size = self.det_size
         orig = img
         h, w, _ = img.shape
         x_s, x_e, y_s, y_e = 0, 0, 0, 0
         img_new = np.zeros((500, 500, 3), np.uint8)
         if h > w:
-            nh = 500
-            nw = (500*w)//h
+            nh = det_size
+            nw = (det_size*w)//h
             ratio = h/nh
             img = cv2.resize(img, (nw, nh))
-            x_s = (500-nw)//2
+            x_s = (det_size-nw)//2
             x_e = x_s + nw
             img_new[:,x_s:x_e] = img
         else:
-            nw = 500
-            nh = (500*h)//w
+            nw = det_size
+            nh = (det_size*h)//w
             ratio = h/nh
             img = cv2.resize(img, (nw, nh))
-            y_s = (500-nh)//2
+            y_s = (det_size-nh)//2
             y_e = y_s + nh
             img_new[y_s:y_e,:] = img
 
